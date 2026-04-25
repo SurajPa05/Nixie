@@ -1,8 +1,15 @@
 import os
 import json
 import re
+import tomllib
+import subprocess
 from dotenv import load_dotenv
 from groq import Groq
+from core.package import main as PackageManager
+from core.systemfetch import fetch_system_specs, save_system_specs
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SYSTEM_DETAILS_PATH = os.path.join(BASE_DIR, "system_details.toml")
 
 tools = [
     "install_package",
@@ -18,12 +25,16 @@ tools = [
     "none"
 ]
 
+def SystemDetails():
+    pass
+
 def extract_json(text):
     """Extract JSON block from model output safely"""
     match = re.search(r"{.*}", text, re.DOTALL)
     if not match:
         raise ValueError("No JSON found in response")
     return match.group(0)
+
 
 def resultFormatting(output):
         """Parse JSON safely"""
@@ -32,7 +43,7 @@ def resultFormatting(output):
 
 def main():
     load_dotenv()
-  
+    save_system_specs(fetch_system_specs())
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
         print("No API key found")
@@ -90,10 +101,19 @@ def main():
 
         raw_output = response.choices[0].message.content
         print("RAW OUTPUT:", raw_output)
+        
 
         try:
             parsed = resultFormatting(raw_output)
             print("PARSED:", parsed)
+            
+            if parsed["action"] == "none":
+                print("No relevant action identified:", parsed.get("reason", "no reason provided"))
+            else:
+                if parsed["action"] == "install_package" or parsed["action"] == "remove_package" or parsed["action"] == "search_package":
+                    #PackageManager(parsed)
+                    pass
+
         except Exception as e:
             print("Parsing failed:", e)
 

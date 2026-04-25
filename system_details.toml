@@ -1,0 +1,16 @@
+[hardware]
+cpu_model = "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz"
+ram_total = "15Gi"
+disk_total = "92G"
+network_interfaces = [
+    { name = "lo", ip = "127.0.0.1" },
+    { name = "enp46s0", ip = "192.168.1.15" },
+    { name = "wlan0", ip = "192.168.1.16" },
+    { name = "docker0", ip = "172.17.0.1" },
+]
+
+[software]
+os_name = "EndeavourOS"
+os_version = "rolling"
+kernel_version = "6.19.12-arch1-1"
+pkg_manager = "Pacman v7.1.0 - libalpm v16.0.1"
